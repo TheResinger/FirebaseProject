@@ -11,22 +11,100 @@
 <body>
     <div class="jumbotron" id="header">
         <h1 class="text-center">Welcome To Rock Paper Scissors</h1>
-        <h2 class="text-center">Please select your player square.</h2>
+        <div class="container">
+            <form>
+                <div class="row">
+                    <div class="form-group col-md-11">
+                        <input class="form-control text-center" id="nameInput" placeholder="Enter your Name to begin!" type="text">
+                    </div>
+                    <div class="col-md-1">
+                    <button class="btn btn-primary float-right" id="addPlayerName">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
     <div class="container">
         <div class="row">
             <div class="card col-md-4" id="player1Card">
                 <div class="card-body">
-                    <h2 class="card-title text-center" id="player1">None</h2>
-                    <h4 class="card-text text-center" id="player1Choice">Click to Play!</h4>
+                    <h2 class="card-title text-center" id="player1"></h2>
+                    <h4 class="card-text text-center" id="player1Choice"></h4>
+                    <div id="p1Choices">
+                        <hr>
+                        <h3 class="text-center option">Rock</h3>
+                        <hr>
+                        <h3 class="text-center option">Paper</h3>
+                        <hr>
+                        <h3 class="text-center option">Scissors</h3>
+                        <hr>
+                    </div>
+                    <div class="row">
+                        <h4 class="text-center col-md-4">Wins:</h4>
+                        <h4 class="text-center col-md-4">Ties:</h4>
+                        <h4 class="text-center col-md-4">Losses:</h4>
+                    </div>
+                    <div class="row">
+                        <h3 class="col-md-4 text-center" id="p1Wins">0</h3>
+                        <h3 class="col-md-4 text-center" id="p1Ties">0</h3>
+                        <h3 class="col-md-4 text-center" id="p1Losses">0</h3>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-4"></div>
+            <div class="card col-md-4" id="resultsDiv">
+                <div class="card-body">
+                    <h3 class="card-title text-center">Results</h3>
+                    <hr>
+                    <h3 class="card-text text-center" id="roundOutcome"></h3>
+                    <h3 class="card-text text-center" id="result"></h3>
+                </div>
+            </div>
             <div class="card col-md-4" id="player2Card">
                 <div class="card-body">
-                    <h2 class="card-title text-center" id="player2">None</h2>
-                    <h4 class="card-text text-center" id="player2Choice">Click to Play!</h4>
+                    <h2 class="card-title text-center" id="player2"></h2>
+                    <h4 class="card-text text-center" id="player2Choice"></h4>
+                    <div id="p2Choices">
+                            <hr>
+                            <h3 class="text-center option">Rock</h3>
+                            <hr>
+                            <h3 class="text-center option">Paper</h3>
+                            <hr>
+                            <h3 class="text-center option">Scissors</h3>
+                            <hr>
+                        </div>
+                        <div class="row">
+                            <h4 class="text-center col-md-4">Wins:</h4>
+                            <h4 class="text-center col-md-4">Ties:</h4>
+                            <h4 class="text-center col-md-4">Losses:</h4>
+                        </div>
+                        <div class="row">
+                            <h3 class="col-md-4 text-center" id="p2Wins">0</h3>
+                            <h3 class="col-md-4 text-center" id="p2Ties">0</h3>
+                            <h3 class="col-md-4 text-center" id="p2Losses">0</h3>
+                        </div>
                 </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="card col-md-12" id="chatBox">
+                <div class="card-body">
+                    <h1 class="card-title text-center">Chat Box</h1>
+                    <hr>
+                    <div class="card-text" id="messages" style="overflow-y:scroll; height:165px;">
+                        <!-- Push <p> tags into messages div -->
+                    </div>
+                </div>
+                <form>
+                    <div class="row">
+                        <div class="form-group col-md-11">
+                            <input class="form-control" id="messageInput" placeholder="Enter a Message" type="text">
+                        </div>
+                        <div class="col-md-1">
+                        <button class="btn btn-primary float-right" id="addMessage">Submit</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

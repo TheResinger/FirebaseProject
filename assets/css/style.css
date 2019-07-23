@@ -1,1 +1,10 @@
-/* TBD */
+
+.card
+{
+    border: 1px solid #000;
+}
+#messages p
+{
+    margin-bottom: 2px;
+    border-bottom: 1px solid #ccc;
+}

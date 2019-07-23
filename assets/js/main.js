@@ -1,122 +1,214 @@
 var firebaseConfig = {
-    apiKey: "AIzaSyB7CYadkluQXQmPC1jZl5TQd4-33faktCE",
-    authDomain: "rock-paper-scissors-ad1ae.firebaseapp.com",
-    databaseURL: "https://rock-paper-scissors-ad1ae.firebaseio.com",
-    projectId: "rock-paper-scissors-ad1ae",
+    apiKey: "AIzaSyADHAMt5aqGzw9zMmZvTjimr3dWKkNRuIo",
+    authDomain: "rockpaperscissors-d1eb1.firebaseapp.com",
+    databaseURL: "https://rockpaperscissors-d1eb1.firebaseio.com",
+    projectId: "rockpaperscissors-d1eb1",
     storageBucket: "",
-    messagingSenderId: "277356354275",
-    appId: "1:277356354275:web:06014972c2da84df"
+    messagingSenderId: "103566512039",
+    appId: "1:103566512039:web:0cdfdce65b8f9388"
   };
   // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig);
 var database = firebase.database();
+var p1 = null;
+var p2 = null;
+var p1Name = "";
+var p2Name = "";
+var currentName = "";
+var p1Choice = "";
+var p2Choice = "";
+var turn = 1;
 
-var playerSelected = false;
-var p1Name = "None";
-var p1Choice = "Click to Play!";
-var p2Name = "None";
-var p2Choice = "Click to Play!";
+database.ref("/players/").on("value",function(snapshot){
+    if(snapshot.child("p1").exists())
+    {
+        p1 = snapshot.val().p1;
+        p1Name = p1.name;
+        $("#player1").text(p1Name);
+        $("#p1Wins").text(p1.wins);
+        $("#p1Ties").text(p1.tie);
+        $("#p1Losses").text(p1.losses);
+    }
+    else
+    {
+        // console.log("No player");
+        p1 = null;
+        p1Name = "";
+        $("#player1").text("Waiting for Player...");
+        database.ref("/outcome/").remove();  
+    }
+    if(snapshot.child("p2").exists())
+    {
+        p2 = snapshot.val().p2;
+        p2Name = p2.name;
+        $("#player2").text(p2Name);
+        $("#p2Wins").text(p2.wins);
+        $("#p2Ties").text(p2.tie);
+        $("#p2Losses").text(p2.losses);
+    }
+    else
+    {
+        // console.log("No Player");
+        p2 = null;
+        p2Name = "";
+        $("#player2").text("Waiting for Player...");
+        database.ref("/outcome/").remove(); 
+    }
+    if(p1 && p2)
+    {
+        $("#result").text("Waiting on " + p1Name + " to choose");
+    }
+    if(!p1 && !p2)
+    {
+        database.ref("/chat/").remove();
+        database.ref("/turn/").remove();
+        database.ref("/outcome/").remove();
+        $("#messages").empty();
+        $("#result").text("");
+    }
+});
 
-database.ref(`Player1/`).on("value",function(snapshot){
-    if(snapshot.child("name").exists() && snapshot.child("choice").exists()){
-        p1Name = snapshot.val().name;
-        p1Choice = snapshot.val().choice;
-    };
-    $("#player1").text(p1Name);
-    $("#player1Choice").text(p1Choice);
-},function(errorObject){
-    console.log("The read Failed: " + errorObject.code);
+database.ref("/players/").on("child_removed", function(snapshot){
+    var msg = snapshot.val().name + " has left the game.";
+    var chatKey = database.ref().child("/chat/").push().key;
+    database.ref("/chat/" + chatKey).set(msg);
 });
-database.ref(`Player2/`).on("value",function(snapshot){
-    if(snapshot.child("name").exists() && snapshot.child("choice").exists()){
-        p2Name = snapshot.val().name;
-        p2Choice = snapshot.val().choice;
-    };
-    $("#player2").text(p2Name);
-    $("#player2Choice").text(p2Choice);
-},function(errorObject){
-    console.log("The read Failed: " + errorObject.code);
+
+database.ref("/chat/").on("child_added", function(snapshot){
+    var msg = snapshot.val();
+    $("#messages").append($("<p>",{"text": msg}));
+    $("#messages").scrollTop($("#messages")[0].scrollHeight);
 });
-function addPlayerTextBox()
+database.ref("/turn/").on("value", function(snapshot){
+    if(snapshot.val() === 1)
+    {
+        turn = 1;
+        if(p1 && p2)
+        {
+            $("#result").text("Waiting on " + p1Name + " to choose");
+        }
+    }
+    else if (snapshot.val() === 2)
+    {
+        turn = 2;
+        if(p1 && p2)
+        {
+            $("#result").text("Waiting on " + p2Name + " to choose");
+        }
+    }
+});
+// database.ref("/outcome/").on("value", function(snapshot){
+//     // $("#roundOutcome").html(snapshot.val());
+//     console.log(snapshot.val());
+//     var msg = snapshot.val();
+//     // var chatKey = database.ref().child("/chat/").push().key;
+//     // database.ref("/chat/" + chatKey).set(msg);
+// });
+
+$("#addPlayerName").on("click",function(event){
+    event.preventDefault();
+    console.log(p1);
+    console.log(p2);
+    if(($("#nameInput").val().trim() !== "") && !(p1 && p2))
+    {
+        if(p1 === null)
+        {
+            currentName = $("#nameInput").val().trim();
+            p1 = {
+                name : currentName,
+                wins : 0,
+                tie : 0,
+                losses : 0,
+                choice : "",
+            };
+            database.ref().child('/players/p1').set(p1);
+            database.ref().child("/turn").set(1);
+            database.ref("/players/p1").onDisconnect().remove();
+        }
+        else if ((p1 !== null) && (p2 === null))
+        {
+            currentName = $("#nameInput").val().trim();
+            p2 = {
+                name : currentName,
+                wins : 0,
+                tie : 0,
+                losses : 0,
+                choice : "",
+            };
+            database.ref().child('/players/p2').set(p2);
+            database.ref("/players/p2").onDisconnect().remove();
+        }
+        var msg = currentName + " has joined the game.";
+        var chatKey = database.ref().child("/chat/").push().key;
+        database.ref("/chat/" + chatKey).set(msg);
+        $("#nameInput").val("");
+    }
+});
+$("#addMessage").on("click", function(event){
+    event.preventDefault();
+    if((currentName !== "") && ($("#messageInput").val().trim() !== ""))
+    {
+        var msg = currentName + " : " + $("#messageInput").val().trim();
+        $("#messageInput").val("");
+        var chatKey = database.ref().child("/chat/").push().key;
+        database.ref("/chat/" + chatKey).set(msg);
+    }
+});
+$("#p1Choices").on("click", ".option", function(event){
+    $("#roundOutcome").text("");
+    event.preventDefault;
+    if(p1 && p2 && (currentName === p1.name) && (turn === 1))
+    {
+        var choice = $(this).text().trim();
+        p1Choice = choice;
+        database.ref().child("/players/p1/choice").set(choice);
+        turn = 2;
+        database.ref().child("/turn/").set(2);
+    }
+});
+$("#p2Choices").on("click", ".option", function(event){
+    event.preventDefault;
+    if(p2 && p2 && (currentName === p2.name) && (turn === 2))
+    {
+        var choice = $(this).text().trim();
+        p2Choice = choice;
+        database.ref().child("/players/p2/choice").set(choice);
+        rps();
+    }
+});
+function rps()
 {
-    $("#name").remove();
-    $("#header").append($("<form>",{"id":"name", "class" : "text-center"}));
-    $("#name").append($("<div>",{"class":"form-group"}));
-    $("#name div").append($("<label>",{"for" : "playerName","text":"Enter Your Name"}));
-    $("#name div").append($("<input>",{"class" : "form-control","id":"playerName","type":"text"}));
-    $("#name").append($("<button>",{"class" : "btn btn-primary float-right","id":"addPlayerName","text":"Submit"}));
+    if((p1.choice === "Rock") || (p1.choice === "Paper") || (p1.choice === "Scissors"))
+    {
+        if((p1.choice === "Rock" && p2.choice === "Scissors") || (p1.choice === "Scissors" && p2.choice === "Paper") || (p1.choice === "Paper" && p2.choice === "Rock"))
+        {
+            database.ref().child("/outcome/").set("Player 1 wins!");
+            database.ref().child("/players/p1/wins").set(p1.wins + 1);
+            database.ref().child("/players/p2/losses").set(p2.losses + 1);
+            var msg = "Player 1 Wins!";
+            var chatKey = database.ref().child("/chat/").push().key;
+            database.ref("/chat/" + chatKey).set(msg);
+        }
+        else if(p1.choice === p2.choice)
+        {
+            database.ref().child("/outcome/").set("Tie Game!");
+            database.ref().child("/players/p1/tie").set(p1.tie + 1);
+            database.ref().child("/players/p2/tie").set(p2.tie + 1);
+            var msg = "Tie Game!";
+            var chatKey = database.ref().child("/chat/").push().key;
+            database.ref("/chat/" + chatKey).set(msg);
+        }
+        else
+        {
+            database.ref().child("/outcome/").set("Player 2 wins!");
+            database.ref().child("/players/p2/wins").set(p2.wins + 1);
+            database.ref().child("/players/p1/losses").set(p1.losses + 1);
+            var msg = "Player 2 Wins!";
+            var chatKey = database.ref().child("/chat/").push().key;
+            database.ref("/chat/" + chatKey).set(msg);
+        }
+    }
+    turn = 1;
+    database.ref().child("/turn").set(1);
+    database.ref().child("/outcome/").set("");
 }
-    $(document).on("click","#player1Card",function(){
-        // No Player Registered
-        playerSelected = true;
-        console.log(playerSelected);
-        if(playerSelected === false)
-        {
-            if($("#player1").text().indexOf("None") > -1) 
-            {
-                addPlayerTextBox();
-                $(document).on("click", "#addPlayerName",function(event) {
-                    event.preventDefault();
-                    var tempName = $("#playerName").val();
-                    $("#name").remove();
-                    console.log(tempName);
-                    database.ref(`Player1/`).set({
-                        name : tempName,
-                        choice : "",
-                    });
-                });
-            }
-            // Player Registered and Name Changed
-            else if ($("#player1").text().indexOf("None") === -1)
-            {
-                $("#header").append($("<h3>",{"text" : "Player already registered.","class":"text-center"}))
-            }
-        }
-        else
-        {
-            console.log("Player Slected Already");
-        }
-    });
-    
-    $(document).on("click","#player2Card",function(){
-        playerSelected = true;
-        console.log(playerSelected);
-        if(playerSelected === false)
-        {
-            if($("#player2").text().indexOf("None") > -1) //No player Registered
-            {
-                $("#header h3").remove();
-                addPlayerTextBox();
-                $(document).on("click", "#addPlayerName",function(event) {
-                    event.preventDefault();
-                    var tempName = $("#playerName").val();
-                    $("#name").remove();
-                    console.log(tempName);
-                    database.ref(`Player2/`).set({
-                        name : tempName,
-                        choice : "",
-                    });
-                });
-            }
-            else if ($("#player2").text().indexOf("None") === -1) //Player Registered and name changed
-            {
-                console.log("Not Found");
-            }
-        }
-        else
-        {
-            console.log("Player Slected Already");
-        }
-    });
-
-function reset()
-{
-    database.ref(`Player1/`).set({
-        name : "None",
-        choice : "Click to Play!",
-    })
-    database.ref(`Player2/`).set({
-        name : "None",
-        choice : "Click to Play!",
-    })
-};
