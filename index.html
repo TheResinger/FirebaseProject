@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Rock Paper Scissors</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="jumbotron" id="header">
+        <h1 class="text-center">Welcome To Rock Paper Scissors</h1>
+        <h2 class="text-center">Please select your player square.</h2>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="card col-md-4" id="player1Card">
+                <div class="card-body">
+                    <h2 class="card-title text-center" id="player1">None</h2>
+                    <h4 class="card-text text-center" id="player1Choice">Click to Play!</h4>
+                </div>
+            </div>
+            <div class="col-md-4"></div>
+            <div class="card col-md-4" id="player2Card">
+                <div class="card-body">
+                    <h2 class="card-title text-center" id="player2">None</h2>
+                    <h4 class="card-text text-center" id="player2Choice">Click to Play!</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://www.gstatic.com/firebasejs/6.3.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-database.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
