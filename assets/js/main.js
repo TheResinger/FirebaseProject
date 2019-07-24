@@ -97,13 +97,6 @@ database.ref("/turn/").on("value", function(snapshot){
         }
     }
 });
-// database.ref("/outcome/").on("value", function(snapshot){
-//     // $("#roundOutcome").html(snapshot.val());
-//     console.log(snapshot.val());
-//     var msg = snapshot.val();
-//     // var chatKey = database.ref().child("/chat/").push().key;
-//     // database.ref("/chat/" + chatKey).set(msg);
-// });
 
 $("#addPlayerName").on("click",function(event){
     event.preventDefault();
@@ -182,10 +175,10 @@ function rps()
     {
         if((p1.choice === "Rock" && p2.choice === "Scissors") || (p1.choice === "Scissors" && p2.choice === "Paper") || (p1.choice === "Paper" && p2.choice === "Rock"))
         {
-            database.ref().child("/outcome/").set("Player 1 wins!");
+            database.ref().child("/outcome/").set(p1Name + " wins!");
             database.ref().child("/players/p1/wins").set(p1.wins + 1);
             database.ref().child("/players/p2/losses").set(p2.losses + 1);
-            var msg = "Player 1 Wins!";
+            var msg = p1Name + " Wins!";
             var chatKey = database.ref().child("/chat/").push().key;
             database.ref("/chat/" + chatKey).set(msg);
         }
@@ -200,10 +193,10 @@ function rps()
         }
         else
         {
-            database.ref().child("/outcome/").set("Player 2 wins!");
+            database.ref().child("/outcome/").set(p2Name + " wins!");
             database.ref().child("/players/p2/wins").set(p2.wins + 1);
             database.ref().child("/players/p1/losses").set(p1.losses + 1);
-            var msg = "Player 2 Wins!";
+            var msg = p2Name + " Wins!";
             var chatKey = database.ref().child("/chat/").push().key;
             database.ref("/chat/" + chatKey).set(msg);
         }
